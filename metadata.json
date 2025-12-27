@@ -1,0 +1,7 @@
+{
+  "name": "Happy New Year",
+  "description": "A festive, interactive 3D New Year experience featuring dynamic visuals, gesture controls, and personalized photo sharing to celebrate the new beginning.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
