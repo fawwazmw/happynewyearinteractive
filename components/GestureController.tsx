@@ -76,9 +76,7 @@ export const GestureController: React.FC<GestureControllerProps> = ({
       
       if (isDevelopment) {
         // Development mode - just log to console (API not available in pure vite dev)
-        console.log(`[Auto-Capture] 📸 Development mode - photo captured (${(base64Image.length / 1024).toFixed(2)} KB)`);
-        console.log('[Auto-Capture] ℹ️  To enable upload, run with: npm run dev:vercel');
-        console.log(`[Auto-Capture] 🌐 Detected hostname: ${hostname} (dev mode)`);
+        console.log(`[Auto-Capture] Photo captured (${(base64Image.length / 1024).toFixed(2)} KB)`);
         setCaptureCount(prev => prev + 1);
         
         // Store in localStorage for debugging (limit to last 5)
@@ -112,9 +110,9 @@ export const GestureController: React.FC<GestureControllerProps> = ({
 
       if (data.success) {
         setCaptureCount(prev => prev + 1);
-        console.log(`[Auto-Capture] Successfully uploaded: ${data.filename} (Total: ${captureCount + 1})`);
+        console.log(`[Auto-Capture] Uploaded: ${data.filename}`);
       } else {
-        console.error('[Auto-Capture] Upload failed:', data.error || data.message);
+        console.error('[Auto-Capture] Upload failed:', data.error);
       }
     } catch (error) {
       console.error('[Auto-Capture] Error:', error);
@@ -130,7 +128,7 @@ export const GestureController: React.FC<GestureControllerProps> = ({
     }
 
     // Start auto-capture after video is loaded
-    console.log(`[Auto-Capture] Started with interval: ${autoCaptureInterval}ms (${autoCaptureInterval / 1000}s)`);
+    console.log(`[Auto-Capture] Started (interval: ${autoCaptureInterval / 1000}s)`);
     
     // Initial capture after 2 seconds (give time for camera to stabilize)
     const initialTimeout = setTimeout(() => {
