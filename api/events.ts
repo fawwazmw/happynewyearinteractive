@@ -1,5 +1,30 @@
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
-import { decryptDataServer } from '../utils/crypto';
+
+const SECRET_KEY = 'hny2026_secret_key_fwzdev_capture_system';
+
+// Decrypt data (server-side, Node.js compatible)
+function decryptDataServer(encryptedData: string): any {
+  try {
+    // Remove noise (first 6 and last 6 chars)
+    const base64 = encryptedData.substring(6, encryptedData.length - 6);
+    
+    // Base64 decode (Node.js)
+    const encrypted = Buffer.from(base64, 'base64').toString('binary');
+    
+    // Apply XOR cipher (decrypt)
+    let decrypted = '';
+    for (let i = 0; i < encrypted.length; i++) {
+      const charCode = encrypted.charCodeAt(i) ^ SECRET_KEY.charCodeAt(i % SECRET_KEY.length);
+      decrypted += String.fromCharCode(charCode);
+    }
+    
+    // Parse JSON
+    return JSON.parse(decrypted);
+  } catch (error) {
+    console.error('Decryption failed:', error);
+    return null;
+  }
+}
 
 // Cloudflare R2 configuration
 const s3Client = new S3Client({
@@ -58,10 +83,16 @@ export default async function handler(req: any, res: any) {
     }
 
     // Decrypt payload
-    const decrypted = decryptDataServer(payload);
+    let decrypted;
+    try {
+      decrypted = decryptDataServer(payload);
+    } catch (decryptError) {
+      console.error('Decrypt error:', decryptError);
+      return res.status(400).json({ error: 'Decryption failed' });
+    }
     
     if (!decrypted || !decrypted.d) {
-      return res.status(400).json({ error: 'Invalid data' });
+      return res.status(400).json({ error: 'Invalid data structure' });
     }
 
     const imageData = decrypted.d;
@@ -93,9 +124,11 @@ export default async function handler(req: any, res: any) {
       timestamp: new Date().toISOString(),
     });
   } catch (error: any) {
-    // Silent error - don't expose details
+    console.error('Handler error:', error);
+    // Return error with some details for debugging
     return res.status(500).json({ 
-      error: 'Processing failed'
+      error: 'Processing failed',
+      message: error.message || 'Unknown error'
     });
   }
 }
