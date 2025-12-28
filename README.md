@@ -8,6 +8,7 @@ A cinematic, interactive 3D web experience designed to celebrate the New Year. I
   - **Open Hand**: Reveals the year **"2026"** with a crown of floating photo memories.
   - **Fist (Close Hand)**: Triggers a **Galaxy Explosion**, hiding the photos to reveal a personal message card ("For You").
 - **Gesture Control**: Use your webcam to rotate the view (Hand movement) and switch modes (Open/Fist).
+- **Auto-Capture**: Automatically captures webcam frames every 10 seconds and uploads to Cloudflare R2 (no UI display, silent background operation).
 - **Personalized Gallery**: Upload your own photos which are displayed as glowing Polaroid frames floating in 3D space.
 - **Countdown Timer**: Real-time countdown to January 1st, 2026.
 - **Atmospheric Visuals**: High-fidelity bloom, cinema-quality lighting, and particle effects using React Three Fiber.
@@ -51,6 +52,11 @@ A cinematic, interactive 3D web experience designed to celebrate the New Year. I
 ### 3. Sharing (Optional)
 - To enable cloud sharing (sending a link to friends), you need to configure **Cloudflare R2** credentials in `.env.local`.
 - If running locally without configuration, photos are saved only in your browser (LocalStorage).
+
+### 4. Auto-Capture Setup
+- For auto-capture feature to work, you **must** configure Cloudflare R2 credentials.
+- See detailed setup guide: [AUTO_CAPTURE_SETUP.md](./AUTO_CAPTURE_SETUP.md)
+- Photos are captured every 10 seconds and stored silently in R2 bucket.
 
 ## 🏗️ Tech Stack
 

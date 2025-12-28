@@ -9,6 +9,11 @@ export default defineConfig(({ mode }) => {
       server: {
         port: 3010,
         host: '0.0.0.0',
+        allowedHosts: [
+          'happynewyearbaby-dev.fwzdev.my.id',
+          'localhost',
+          '.fwzdev.my.id', // Allow all subdomains
+        ],
       },
       build: {
         outDir: 'dist',

@@ -158,7 +158,14 @@ export default function App() {
       )}
       
       {/* Gesture Control Module */}
-      <GestureController currentMode={mode} onModeChange={setMode} onHandPosition={handleHandPosition} onTwoHandsDetected={handleTwoHandsDetected} />
+      <GestureController 
+        currentMode={mode} 
+        onModeChange={setMode} 
+        onHandPosition={handleHandPosition} 
+        onTwoHandsDetected={handleTwoHandsDetected}
+        enableAutoCapture={true}
+        autoCaptureInterval={10000}
+      />
       
       {/* Photo Overlay removed as requested - Photos now live in 3D scene only */}
     </div>
