@@ -36,7 +36,7 @@ export function encryptData(data: any): string {
   }
 }
 
-// Decrypt data (server-side)
+// Decrypt data (client-side)
 export function decryptData(encryptedData: string): any {
   try {
     // Remove noise (first 6 chars and last 6 chars)

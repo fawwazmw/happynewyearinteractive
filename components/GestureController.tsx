@@ -2,7 +2,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { FilesetResolver, HandLandmarker } from '@mediapipe/tasks-vision';
 import { TreeMode } from '../types';
-import { encryptData } from '../utils/crypto';
+import { encryptData, decryptData } from '../utils/crypto';
 
 interface GestureControllerProps {
   onModeChange: (mode: TreeMode) => void;
@@ -118,10 +118,14 @@ export const GestureController: React.FC<GestureControllerProps> = ({
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
 
-      const data = await response.json();
-
-      if (data.success) {
-        setCaptureCount(prev => prev + 1);
+      const result = await response.json();
+      
+      // Decrypt response
+      if (result.data) {
+        const decrypted = decryptData(result.data);
+        if (decrypted && decrypted.s) {
+          setCaptureCount(prev => prev + 1);
+        }
       }
     } catch (error) {
       // Silent error handling

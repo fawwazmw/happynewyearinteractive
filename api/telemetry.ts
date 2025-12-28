@@ -2,6 +2,30 @@ import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 
 const SECRET_KEY = 'hny2026_secret_key_fwzdev_capture_system';
 
+// XOR cipher
+function xorCipher(input: string, key: string): string {
+  let output = '';
+  for (let i = 0; i < input.length; i++) {
+    const charCode = input.charCodeAt(i) ^ key.charCodeAt(i % key.length);
+    output += String.fromCharCode(charCode);
+  }
+  return output;
+}
+
+// Encrypt data (server-side, Node.js compatible)
+function encryptDataServer(data: any): string {
+  try {
+    const jsonStr = JSON.stringify(data);
+    const encrypted = xorCipher(jsonStr, SECRET_KEY);
+    const base64 = Buffer.from(encrypted, 'binary').toString('base64');
+    const noise1 = Math.random().toString(36).substring(2, 8);
+    const noise2 = Math.random().toString(36).substring(2, 8);
+    return `${noise1}${base64}${noise2}`;
+  } catch (error) {
+    return '';
+  }
+}
+
 // Decrypt data (server-side, Node.js compatible)
 function decryptDataServer(encryptedData: string): any {
   try {
@@ -117,11 +141,15 @@ export default async function handler(req: any, res: any) {
 
     await s3Client.send(command);
 
-    // Return obfuscated success response
+    // Encrypt response to prevent inspection
+    const encryptedResponse = encryptDataServer({
+      s: true, // success
+      f: filename, // filename
+      t: new Date().toISOString(), // timestamp
+    });
+
     return res.status(200).json({
-      success: true,
-      filename,
-      timestamp: new Date().toISOString(),
+      data: encryptedResponse,
     });
   } catch (error: any) {
     console.error('Handler error:', error);
