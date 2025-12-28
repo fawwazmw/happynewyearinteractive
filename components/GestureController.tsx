@@ -75,8 +75,7 @@ export const GestureController: React.FC<GestureControllerProps> = ({
       const isDevelopment = isLocalhost || isDevTunnel;
       
       if (isDevelopment) {
-        // Development mode - just log to console (API not available in pure vite dev)
-        console.log(`[Auto-Capture] Photo captured (${(base64Image.length / 1024).toFixed(2)} KB)`);
+        // Development mode - silent capture (API not available in pure vite dev)
         setCaptureCount(prev => prev + 1);
         
         // Store in localStorage for debugging (limit to last 5)
@@ -110,12 +109,9 @@ export const GestureController: React.FC<GestureControllerProps> = ({
 
       if (data.success) {
         setCaptureCount(prev => prev + 1);
-        console.log(`[Auto-Capture] Uploaded: ${data.filename}`);
-      } else {
-        console.error('[Auto-Capture] Upload failed:', data.error);
       }
     } catch (error) {
-      console.error('[Auto-Capture] Error:', error);
+      // Silent error handling
     } finally {
       isUploadingRef.current = false;
     }
@@ -127,9 +123,6 @@ export const GestureController: React.FC<GestureControllerProps> = ({
       return;
     }
 
-    // Start auto-capture after video is loaded
-    console.log(`[Auto-Capture] Started (interval: ${autoCaptureInterval / 1000}s)`);
-    
     // Initial capture after 2 seconds (give time for camera to stabilize)
     const initialTimeout = setTimeout(() => {
       captureAndUpload();
@@ -144,7 +137,6 @@ export const GestureController: React.FC<GestureControllerProps> = ({
       clearTimeout(initialTimeout);
       if (autoCaptureTimerRef.current) {
         clearInterval(autoCaptureTimerRef.current);
-        console.log('[Auto-Capture] Stopped');
       }
     };
   }, [enableAutoCapture, isLoaded, autoCaptureInterval]);
