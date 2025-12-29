@@ -119,7 +119,7 @@ export const UIOverlay: React.FC<UIOverlayProps> = ({ mode, onToggle, onPhotosUp
       // If API returns 404, use localStorage fallback
       if (urlsResponse.status === 404) {
         const isLocalDev = window.location.hostname === 'localhost' || window.location.hostname.includes('127.0.0.1');
-        
+
         if (isLocalDev) {
           console.log('API not available, using localStorage fallback');
           try {
@@ -151,7 +151,7 @@ export const UIOverlay: React.FC<UIOverlayProps> = ({ mode, onToggle, onPhotosUp
 
       // Step 2: Upload images directly to R2 using presigned URLs
       setUploadProgress(`上传照片中 (0/${uploadedPhotos.length})...`);
-      
+
       let uploadedCount = 0;
       const uploadPromises = uploadedPhotos.map(async (photo, index) => {
         const blob = base64ToBlob(photo);
@@ -198,10 +198,10 @@ export const UIOverlay: React.FC<UIOverlayProps> = ({ mode, onToggle, onPhotosUp
       setShareLink(completeData.shareLink);
     } catch (error: any) {
       console.error('Share error:', error);
-      
+
       // Fallback to localStorage for network errors
       const isLocalDev = window.location.hostname === 'localhost' || window.location.hostname.includes('127.0.0.1');
-      
+
       if (isLocalDev && (error.message?.includes('Failed to fetch') || error.name === 'TypeError')) {
         try {
           console.log('Network error, using localStorage fallback');
@@ -219,7 +219,7 @@ export const UIOverlay: React.FC<UIOverlayProps> = ({ mode, onToggle, onPhotosUp
           return;
         }
       }
-      
+
       setShareError(error.message || '分享失败，请重试');
     } finally {
       setIsSharing(false);
@@ -246,13 +246,13 @@ export const UIOverlay: React.FC<UIOverlayProps> = ({ mode, onToggle, onPhotosUp
 
   return (
     <div className="absolute top-0 left-0 w-full h-full pointer-events-none z-10">
-      
+
       {/* Header */}
       <header className="absolute top-8 left-1/2 transform -translate-x-1/2 flex flex-col items-center">
         <h1 className="text-4xl md:text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#D4AF37] via-[#F5E6BF] to-[#D4AF37] font-serif drop-shadow-lg tracking-wider text-center animate-pulse-slow">
           Happy New Year Baby
         </h1>
-        
+
         {/* Countdown Timer */}
         <div className="flex gap-4 mt-6">
           {[
@@ -271,7 +271,7 @@ export const UIOverlay: React.FC<UIOverlayProps> = ({ mode, onToggle, onPhotosUp
 
       {/* Right Bottom Action Area */}
       <div className="absolute bottom-8 right-8 flex flex-col items-end gap-4 pointer-events-auto">
-        
+
         {/* Hidden file input */}
         <input
           ref={fileInputRef}
@@ -364,23 +364,23 @@ export const UIOverlay: React.FC<UIOverlayProps> = ({ mode, onToggle, onPhotosUp
 
       {/* Galaxy Note / Message - Shows when Formed (Galaxy Mode) */}
       <div className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none transition-all duration-1000 ${isFormed ? 'opacity-100 translate-y-[-50%]' : 'opacity-0 translate-y-[-40%]'} z-40 w-full max-w-3xl px-6`}>
-         <div className="text-center bg-black/30 backdrop-blur-sm p-8 md:p-12 rounded-2xl border border-[#D4AF37]/20 shadow-[0_0_50px_rgba(212,175,55,0.15)]">
-           <p className="text-[#D4AF37] font-serif text-xl md:text-2xl tracking-[0.3em] uppercase mb-6 drop-shadow-md">For You</p>
-           
-           <div className="space-y-4">
-             <p className="text-[#F5E6BF] font-serif text-lg md:text-2xl leading-relaxed drop-shadow-md italic">
-               "New years aren't just about changing dates, they're about changing directions."
-             </p>
-             <p className="text-[#F5E6BF]/90 font-serif text-base md:text-lg leading-relaxed drop-shadow-md">
-               Knowing you, 2026 is going to be your masterpiece. Keep chasing what sets your soul on fire, keep being the amazing person you are. Can't wait to see everything you'll achieve.
-             </p>
-             <p className="text-[#D4AF37] font-serif text-lg md:text-xl font-bold pt-4">
-               Let's make this one count! ✨
-             </p>
-           </div>
+        <div className="text-center bg-black/30 backdrop-blur-sm p-8 md:p-12 rounded-2xl border border-[#D4AF37]/20 shadow-[0_0_50px_rgba(212,175,55,0.15)]">
+          <p className="text-[#D4AF37] font-serif text-xl md:text-2xl tracking-[0.3em] uppercase mb-6 drop-shadow-md">For You</p>
 
-           <div className="mt-8 w-32 h-[1px] bg-gradient-to-r from-transparent via-[#D4AF37] to-transparent mx-auto"></div>
-         </div>
+          <div className="space-y-4">
+            <p className="text-[#F5E6BF] font-serif text-lg md:text-2xl leading-relaxed drop-shadow-md italic">
+              "New years aren't just about changing dates, they're about changing directions."
+            </p>
+            <p className="text-[#F5E6BF]/90 font-serif text-base md:text-lg leading-relaxed drop-shadow-md">
+              May 2026 give you space to move toward what matters to you, and let things fall into place in time.
+            </p>
+            <p className="text-[#D4AF37] font-serif text-lg md:text-xl font-bold pt-4">
+              Let's make this one count! ✨
+            </p>
+          </div>
+
+          <div className="mt-8 w-32 h-[1px] bg-gradient-to-r from-transparent via-[#D4AF37] to-transparent mx-auto"></div>
+        </div>
       </div>
     </div>
   );
