@@ -3,10 +3,11 @@
 ## 🔴 Problem
 
 ```
-POST https://happynewyearbaby-dev.fwzdev.my.id/api/auto-capture 404 (Not Found)
+POST https://happynewyearbabysa-dev.fwzdev.my.id/api/auto-capture 404 (Not Found)
 ```
 
 **Root Cause:**
+
 - Menggunakan `npm run dev` (pure Vite) yang **tidak** menjalankan API routes
 - API endpoints (`/api/*`) hanya tersedia di:
   - Vercel dev mode (`npm run dev:vercel`)
@@ -34,6 +35,7 @@ if (!isProduction) {
 ### 2. Fallback Behavior (Development)
 
 **Saat development (`npm run dev`):**
+
 - ✅ Auto-capture tetap berjalan setiap 10 detik
 - ✅ Foto ter-capture (converted to base64 JPEG)
 - ✅ Metadata di-log ke console
@@ -41,6 +43,7 @@ if (!isProduction) {
 - ❌ **Tidak upload** ke R2 (API tidak tersedia)
 
 **Console output:**
+
 ```
 [Auto-Capture] Development mode - photo captured (45.23 KB)
 [Auto-Capture] To enable upload, run with: npm run dev:vercel
@@ -49,6 +52,7 @@ if (!isProduction) {
 ### 3. Full Upload Mode (Vercel Dev)
 
 **Saat production atau vercel dev:**
+
 ```bash
 npm run dev:vercel
 ```
@@ -58,6 +62,7 @@ npm run dev:vercel
 - ✅ API endpoints tersedia
 
 **Console output:**
+
 ```
 [Auto-Capture] Successfully uploaded: auto-capture/2025-12-28_13-45-30-123.jpg (Total: 1)
 ```
@@ -90,21 +95,25 @@ Sekarang saat menjalankan `npm run dev`:
 2. **Gesture control berjalan** ✅
 3. **Auto-capture berjalan setiap 10 detik** ✅
 4. **Console logs:**
+
    ```
    [Auto-Capture] Started with interval: 10000ms (10s)
    [Auto-Capture] Development mode - photo captured (45.23 KB)
    [Auto-Capture] To enable upload, run with: npm run dev:vercel
    ```
+
 5. **Tidak ada error 404** ✅
 
 ### 🔍 Debug Info in Console
 
 Check captured photos metadata:
+
 ```javascript
 JSON.parse(localStorage.getItem('dev_auto_captures'))
 ```
 
 Output:
+
 ```json
 [
   {
@@ -123,12 +132,15 @@ Output:
 ## 🚀 Next Steps
 
 ### For Development (Current Setup)
+
 ```bash
 npm run dev
 ```
+
 ✅ **Sudah berjalan sempurna** - Auto-capture active, no upload, no errors
 
 ### For Testing Upload
+
 ```bash
 # 1. Setup environment
 cp env.example .env.local
@@ -142,6 +154,7 @@ npm run dev:vercel
 ```
 
 ### For Production
+
 ```bash
 vercel deploy --prod
 ```
@@ -174,11 +187,13 @@ vercel deploy --prod
 1. **Refresh browser** (clear cache if needed)
 2. **Open DevTools Console**
 3. **Look for:**
+
    ```
    [Auto-Capture] Started with interval: 10000ms (10s)
    [Auto-Capture] Development mode - photo captured (XX.XX KB)
    [Auto-Capture] To enable upload, run with: npm run dev:vercel
    ```
+
 4. **No 404 errors** ✅
 5. **No JSON parsing errors** ✅
 

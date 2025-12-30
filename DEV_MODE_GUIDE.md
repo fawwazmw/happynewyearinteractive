@@ -9,6 +9,7 @@ npm run dev
 ```
 
 **Karakteristik:**
+
 - ✅ Fast reload
 - ✅ Auto-capture berjalan (capture foto setiap 10 detik)
 - ❌ **Upload ke R2 tidak aktif** (API endpoint tidak tersedia)
@@ -16,6 +17,7 @@ npm run dev
 - ℹ️ Metadata disimpan di localStorage untuk debugging
 
 **Console Output:**
+
 ```
 [Auto-Capture] Started with interval: 10000ms (10s)
 [Auto-Capture] Development mode - photo captured (45.23 KB)
@@ -23,6 +25,7 @@ npm run dev
 ```
 
 **Kapan menggunakan:**
+
 - Development UI/UX
 - Testing gesture control
 - Fast iteration tanpa perlu R2 setup
@@ -36,12 +39,14 @@ npm run dev:vercel
 ```
 
 **Karakteristik:**
+
 - ✅ API endpoints aktif (`/api/*`)
 - ✅ Auto-capture + Upload ke R2 berjalan penuh
 - ✅ Environment variables dari `.env.local` loaded
 - ⚠️ Reload sedikit lebih lambat dibanding pure vite
 
 **Console Output:**
+
 ```
 [Auto-Capture] Started with interval: 10000ms (10s)
 [Auto-Capture] Successfully uploaded: auto-capture/2025-12-28_13-45-30-123.jpg (Total: 1)
@@ -49,17 +54,21 @@ npm run dev:vercel
 ```
 
 **Kapan menggunakan:**
+
 - Testing upload functionality
 - End-to-end testing sebelum deploy
 - Verify R2 integration
 
 **Prerequisites:**
+
 1. Install Vercel CLI (jika belum):
+
    ```bash
    npm install -g vercel
    ```
 
 2. Setup `.env.local`:
+
    ```bash
    cp env.example .env.local
    # Edit .env.local dengan Cloudflare R2 credentials
@@ -72,11 +81,12 @@ npm run dev:vercel
 Jika menggunakan tunnel untuk akses dari device lain:
 
 1. **Pastikan vite.config.ts sudah dikonfigurasi** (sudah ditambahkan):
+
    ```typescript
    server: {
      host: '0.0.0.0',
      allowedHosts: [
-       'happynewyearbaby-dev.fwzdev.my.id',
+       'happynewyearbabysa-dev.fwzdev.my.id',
        'localhost',
        '.fwzdev.my.id',
      ],
@@ -84,14 +94,16 @@ Jika menggunakan tunnel untuk akses dari device lain:
    ```
 
 2. **Jalankan dengan Vite:**
+
    ```bash
    npm run dev
    # Tunnel akan forward ke localhost:3010
    ```
 
 3. **Akses via tunnel URL:**
+
    ```
-   https://happynewyearbaby-dev.fwzdev.my.id
+   https://happynewyearbabysa-dev.fwzdev.my.id
    ```
 
 **Note:** Dengan tunnel + pure vite dev, auto-capture akan tetap jalan tapi **upload tidak aktif** (development mode). Untuk enable upload via tunnel, gunakan `vercel dev` dengan tunnel.
@@ -145,6 +157,7 @@ if (!isProduction) {
 ```
 
 **Detection:**
+
 - `localhost` atau `127.0.0.1` → Development mode (no upload)
 - Domain lain (including tunnel) → Production mode (upload aktif)
 
@@ -176,19 +189,22 @@ Atau buat conditional:
 
 ## 🎯 Workflow Recommendation
 
-### For UI/UX Development:
+### For UI/UX Development
+
 ```bash
 npm run dev
 # Fast reload, ignore auto-capture errors
 ```
 
-### For Feature Testing:
+### For Feature Testing
+
 ```bash
 npm run dev:vercel
 # Test full functionality including R2 upload
 ```
 
-### For Production:
+### For Production
+
 ```bash
 vercel deploy
 # atau
@@ -204,6 +220,7 @@ npm run build && vercel --prod
 **Penyebab:** Menggunakan `npm run dev` (pure vite) tapi code detect sebagai production mode.
 
 **Solusi:**
+
 1. Gunakan `npm run dev:vercel` untuk enable API
 2. Atau edit code untuk force development mode
 3. Atau disable auto-capture sementara
@@ -211,6 +228,7 @@ npm run build && vercel --prod
 ### Error: "Command 'vercel' not found"
 
 **Solusi:**
+
 ```bash
 npm install -g vercel
 # atau gunakan npx
@@ -220,6 +238,7 @@ npx vercel dev
 ### Upload gagal di vercel dev
 
 **Cek:**
+
 1. File `.env.local` exists dan terisi lengkap
 2. Cloudflare credentials valid
 3. R2 bucket `christmas-tree-photos` sudah dibuat
@@ -235,6 +254,7 @@ npx vercel dev
 | Vercel Dev | `npm run dev:vercel` | ✅ Full | ✅ | Feature testing |
 | Production | Deploy to Vercel | ✅ Full | ✅ | Live site |
 
-**Recommendation:** 
-- Development → `npm run dev` 
+**Recommendation:**
+
+- Development → `npm run dev`
 - Pre-deploy testing → `npm run dev:vercel`
