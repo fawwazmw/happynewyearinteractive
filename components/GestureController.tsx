@@ -426,12 +426,7 @@ export const GestureController: React.FC<GestureControllerProps> = ({
       
       {/* Camera Preview Frame */}
       <div className="relative w-[18.75vw] h-[14.0625vw] border-2 border-[#D4AF37] rounded-lg overflow-hidden shadow-[0_0_20px_rgba(212,175,55,0.3)] bg-black">
-        {/* Instruction Overlay */}
-        <div className="absolute top-0 left-0 w-full p-2 bg-gradient-to-b from-black/80 to-transparent z-30">
-           <p className="text-[#D4AF37] text-xs font-serif text-center uppercase tracking-wider">
-             {currentMode === TreeMode.CHAOS ? 'Fist to Explode' : 'Open Hand for 2026'}
-           </p>
-        </div>
+        {/* Instruction Overlay Removed */}
 
         {/* Decorative Lines */}
         <div className="absolute inset-0 border border-[#F5E6BF]/20 m-1 rounded-sm z-10"></div>

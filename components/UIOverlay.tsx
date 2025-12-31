@@ -363,23 +363,23 @@ export const UIOverlay: React.FC<UIOverlayProps> = ({ mode, onToggle, onPhotosUp
       <div className="absolute bottom-8 right-8 w-16 h-16 border-b-2 border-r-2 border-[#D4AF37] opacity-50"></div>
 
       {/* Galaxy Note / Message - Shows when Formed (Galaxy Mode) */}
-      <div className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none transition-all duration-1000 ${isFormed ? 'opacity-100 translate-y-[-50%]' : 'opacity-0 translate-y-[-40%]'} z-40 w-full max-w-3xl px-6`}>
-        <div className="text-center bg-black/30 backdrop-blur-sm p-8 md:p-12 rounded-2xl border border-[#D4AF37]/20 shadow-[0_0_50px_rgba(212,175,55,0.15)]">
-          <p className="text-[#D4AF37] font-serif text-xl md:text-2xl tracking-[0.3em] uppercase mb-6 drop-shadow-md">For You</p>
+      <div className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none transition-all duration-1000 ${isFormed ? 'opacity-100 translate-y-[-50%]' : 'opacity-0 translate-y-[-40%]'} z-40 w-full max-w-3xl px-4 md:px-6`}>
+        <div className="text-center bg-black/30 backdrop-blur-sm p-6 md:p-12 rounded-2xl border border-[#D4AF37]/20 shadow-[0_0_50px_rgba(212,175,55,0.15)]">
+          <p className="text-[#D4AF37] font-serif text-lg md:text-2xl tracking-[0.3em] uppercase mb-4 md:mb-6 drop-shadow-md">For You</p>
 
-          <div className="space-y-4">
-            <p className="text-[#F5E6BF] font-serif text-lg md:text-2xl leading-relaxed drop-shadow-md italic">
+          <div className="space-y-3 md:space-y-4">
+            <p className="text-[#F5E6BF] font-serif text-base md:text-2xl leading-relaxed drop-shadow-md italic">
               "New years aren't just about changing dates, they're about changing directions."
             </p>
-            <p className="text-[#F5E6BF]/90 font-serif text-base md:text-lg leading-relaxed drop-shadow-md">
+            <p className="text-[#F5E6BF]/90 font-serif text-sm md:text-lg leading-relaxed drop-shadow-md">
               May 2026 give you space to move toward what matters to you, and let things fall into place in time.
             </p>
-            <p className="text-[#D4AF37] font-serif text-lg md:text-xl font-bold pt-4">
+            <p className="text-[#D4AF37] font-serif text-base md:text-xl font-bold pt-2 md:pt-4">
               Let's make this one count! ✨
             </p>
           </div>
 
-          <div className="mt-8 w-32 h-[1px] bg-gradient-to-r from-transparent via-[#D4AF37] to-transparent mx-auto"></div>
+          <div className="mt-6 md:mt-8 w-32 h-[1px] bg-gradient-to-r from-transparent via-[#D4AF37] to-transparent mx-auto"></div>
         </div>
       </div>
     </div>
